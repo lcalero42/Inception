@@ -1,19 +1,21 @@
-FROM alpine:3.18
+FROM debian:bookworm-slim
 
-# 1. Install nginx (correct package manager)
-RUN apk update && apk add --no-cache nginx openssl
+# Install Nginx and SSL support
+RUN apt-get update && \
+    apt-get install -y nginx && \
+    rm -rf /var/lib/apt/lists/*
 
-# 2. Create required directories
-RUN mkdir -p /run/nginx /etc/nginx/ssl /var/www/html
+# Create necessary directories
+RUN mkdir -p /var/www/html /etc/nginx/ssl
 
-# 3. Copy nginx configuration (TLS enforced there)
-COPY conf/nginx.conf /etc/nginx/nginx.conf
-
-# 4. Copy TLS certificates
+# Copy configuration and SSL certificates
+COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
 COPY ssl /etc/nginx/ssl
 
-# 5. Expose HTTPS only
+RUN chown -R www-data:www-data /var/www/html
+
+# Expose HTTPS port
 EXPOSE 443
 
-# 6. Run nginx in foreground (PID 1)
+# Start Nginx in foreground
 CMD ["nginx", "-g", "daemon off;"]
