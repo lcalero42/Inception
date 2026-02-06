@@ -41,4 +41,5 @@ if [ ! -f wp-config.php ]; then
 fi
 
 # Start PHP-FPM
-exec php-fpm81 -F
+exec php-fpm8.2 -F
+

@@ -1,21 +1,21 @@
-FROM alpine:3.18
+FROM debian:bookworm-slim
 
-RUN apk update && apk add --no-cache \
-    mariadb \
-    mariadb-client \
-    bash
+# Install MariaDB server
+RUN apt-get update && \
+    apt-get install -y mariadb-server mariadb-client && \
+    rm -rf /var/lib/apt/lists/*
 
-# Create necessary directories
-RUN mkdir -p /run/mysqld /var/lib/mysql \
-    && chown -R mysql:mysql /run/mysqld /var/lib/mysql
+# Create required directories
+RUN mkdir -p /var/lib/mysql /var/run/mysqld && \
+    chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
 
-# Copy config
-COPY conf/my.cnf /etc/my.cnf
+# Copy MariaDB config
+COPY conf/my.cnf /etc/mysql/my.cnf
 
 # Copy entrypoint
-COPY tools/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY tools/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 3306
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
