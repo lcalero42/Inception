@@ -10,6 +10,11 @@ services:
       - mariadb_data:/var/lib/mysql
     networks:
       - inception
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     secrets:
       - db_password
       - db_root_password
@@ -23,9 +28,15 @@ services:
     volumes:
       - wordpress_data:/var/www/html
     depends_on:
-      - mariadb
+      mariadb:
+       condition: service_healthy 
     networks:
       - inception
+    healthcheck:
+      test: ["CMD", "pgrep", "php-fpm"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     secrets:
       - db_password
       - credentials

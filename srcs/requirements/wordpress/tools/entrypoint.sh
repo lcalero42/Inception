@@ -42,4 +42,3 @@ fi
 
 # Start PHP-FPM
 exec php-fpm8.2 -F
-
