@@ -49,6 +49,7 @@ services:
       - "443:443"
     volumes:
       - wordpress_data:/var/www/html
+      - ./requirements/bonus/static_website/tools:/var/www/static:ro
     depends_on:
       - wordpress
     networks:
@@ -105,16 +106,6 @@ services:
       - /sys:/sys:ro 
       - /var/lib/docker/:/var/lib/docker:ro
     restart: always
-  static_website:
-    build: ./requirements/bonus/static_website
-    image: static_website
-    container_name: static_website
-    networks:
-      - inception
-    restart: always
-    ports:
-      - "8082:80"
-
 
 networks:
   inception:

@@ -6,7 +6,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Create necessary directories
-RUN mkdir -p /var/www/html /etc/nginx/ssl
+RUN mkdir -p /var/www/html /var/www/static /etc/nginx/ssl && \
+    chown -R www-data:www-data /var/www/html /var/www/static
 
 # Copy configuration and SSL certificates
 COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
