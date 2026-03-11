@@ -1,8 +1,18 @@
 FROM debian:bookworm-slim
 
-# Install PHP + extensions + unzip + curl for WP-CLI
+# Install PHP + extensions + unzip + curl for WP-CLI + redis-tools for healthcheck
 RUN apt-get update && \
-    apt-get install -y php-fpm php-mysql php-cli php-curl php-xml unzip curl mariadb-client && \
+    apt-get install -y \
+        php-fpm \
+        php-mysql \
+        php-cli \
+        php-curl \
+        php-xml \
+        php-redis \
+        unzip \
+        curl \
+        mariadb-client \
+        redis-tools && \
     rm -rf /var/lib/apt/lists/*
 
 # Configure PHP-FPM to listen on 0.0.0.0:9000
@@ -21,7 +31,5 @@ COPY tools/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 WORKDIR /var/www/html
-
 EXPOSE 9000
-
 ENTRYPOINT ["/entrypoint.sh"]

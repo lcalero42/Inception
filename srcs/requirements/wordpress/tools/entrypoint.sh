@@ -10,11 +10,19 @@ DB_PASSWORD=$(cat "$MYSQL_PASSWORD_FILE")
 # Load WordPress credentials
 . "$WP_CREDENTIALS_PATH"
 
-# Wait for MariaDB
+# Wait for MariaDB to be ready
 until mariadb -h mariadb -u"$MYSQL_USER" -p"$DB_PASSWORD" "$MYSQL_DATABASE" >/dev/null 2>&1; do
+    echo "Waiting for MariaDB..."
     sleep 1
 done
 
+# Wait for Redis to be ready
+until redis-cli -h redis ping 2>/dev/null | grep -q "PONG"; do
+    echo "Waiting for Redis..."
+    sleep 1
+done
+
+# Install WordPress if it does not exist yet
 if [ ! -f wp-config.php ]; then
     wp core download --allow-root
     wp config create \
@@ -23,7 +31,6 @@ if [ ! -f wp-config.php ]; then
         --dbpass="$DB_PASSWORD" \
         --dbhost="mariadb" \
         --allow-root
-
     wp core install \
         --url="$DOMAIN_NAME" \
         --title="$WP_TITLE" \
@@ -32,12 +39,37 @@ if [ ! -f wp-config.php ]; then
         --admin_email="$WP_ADMIN_EMAIL" \
         --skip-email \
         --allow-root
-
     wp user create \
         "$WP_USER" "$WP_USER_EMAIL" \
         --user_pass="$WP_USER_PASSWORD" \
         --role=author \
         --allow-root
+fi
+
+# Ensure Redis configuration exists in wp-config.php
+if ! wp config has WP_CACHE --allow-root; then
+    wp config set WP_CACHE true --raw --allow-root
+fi
+if ! wp config has WP_REDIS_HOST --allow-root; then
+    wp config set WP_REDIS_HOST redis --allow-root
+fi
+if ! wp config has WP_REDIS_PORT --allow-root; then
+    wp config set WP_REDIS_PORT 6379 --raw --allow-root
+fi
+
+# Install Redis plugin if missing
+if ! wp plugin is-installed redis-cache --allow-root; then
+    wp plugin install redis-cache --activate --allow-root
+fi
+
+# Activate plugin if installed but not active
+if ! wp plugin is-active redis-cache --allow-root; then
+    wp plugin activate redis-cache --allow-root
+fi
+
+# Enable Redis object cache drop-in if not connected
+if ! wp redis status --allow-root 2>&1 | grep -q "Status: Connected"; then
+    wp redis enable --allow-root
 fi
 
 # Start PHP-FPM
