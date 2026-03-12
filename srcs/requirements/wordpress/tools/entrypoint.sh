@@ -10,12 +10,6 @@ DB_PASSWORD=$(cat "$MYSQL_PASSWORD_FILE")
 # Load WordPress credentials
 . "$WP_CREDENTIALS_PATH"
 
-# Wait for MariaDB to be ready
-until mariadb -h mariadb -u"$MYSQL_USER" -p"$DB_PASSWORD" "$MYSQL_DATABASE" >/dev/null 2>&1; do
-    echo "Waiting for MariaDB..."
-    sleep 1
-done
-
 # Wait for Redis to be ready
 until redis-cli -h redis ping 2>/dev/null | grep -q "PONG"; do
     echo "Waiting for Redis..."

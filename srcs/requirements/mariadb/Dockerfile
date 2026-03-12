@@ -5,6 +5,9 @@ RUN apt-get update && \
     apt-get install -y mariadb-server mariadb-client && \
     rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /docker-entrypoint-initdb.d /var/lib/mysql /var/run/mysqld && \
+    chown -R mysql:mysql /var/lib/mysql /var/run/mysqld
+
 # Create required directories
 RUN mkdir -p /var/lib/mysql /var/run/mysqld && \
     chown -R mysql:mysql /var/lib/mysql /var/run/mysqld

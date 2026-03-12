@@ -18,7 +18,7 @@ services:
     secrets:
       - db_password
       - db_root_password
-    restart: always
+    restart: unless-stopped
   wordpress:
     build: ./requirements/wordpress
     image: wordpress:42
