@@ -92,6 +92,8 @@ services:
       - .env
     ports:
       - "21:21"
+      - "20:20"
+      - "40000-40005:40000-40005"
     depends_on:
       - wordpress
     restart: unless-stopped
@@ -120,13 +122,13 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/lcalero/data/mariadb
+      device: ${VOLUMES_LOCATION}/mariadb
   wordpress_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/lcalero/data/wordpress
+      device: ${VOLUMES_LOCATION}/wordpress
 
 secrets:
   db_password:
