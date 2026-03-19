@@ -67,4 +67,4 @@ Here is the list of the main **references** i used to make this **project** :
 - [mariadb doc](https://mariadb.com/docs)
 - [docker course](https://courses.mooc.fi/)
 
-> In this project, i mainly used **AI** for **documentation** purposes such as **configuration informations** on a service of the project
+> In this project, i mainly used **AI** for **documentation** purposes such as **configuration informations** on a service of the project and markdown reformulations
