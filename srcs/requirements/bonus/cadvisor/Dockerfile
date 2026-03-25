@@ -1,10 +1,10 @@
 FROM debian:bookworm-slim
 
-RUN apt update -y \ 
-	&& apt install wget -y \
-	&& wget https://github.com/google/cadvisor/releases/download/v0.37.0/cadvisor \
-	&& chmod +x cadvisor
+RUN apt update -y \
+    && apt install wget -y \
+    && wget https://github.com/google/cadvisor/releases/download/v0.37.0/cadvisor \
+    && chmod +x cadvisor
 
 EXPOSE 8080
 
-CMD ["./cadvisor"]
+CMD ["./cadvisor", "--url_base_prefix=/cadvisor"]

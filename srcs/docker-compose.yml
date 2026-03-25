@@ -62,8 +62,6 @@ services:
     build: ./requirements/bonus/adminer
     image: adminer:42
     container_name: adminer
-    ports:
-      - "8080:8080"
     networks:
       - inception
     depends_on:
@@ -101,8 +99,6 @@ services:
     build: ./requirements/bonus/cadvisor
     image: cadvisor:42
     container_name: cadvisor
-    ports:
-      - "9090:8080"
     networks:
       - inception
     volumes:
